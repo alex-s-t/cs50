@@ -4,22 +4,29 @@
 #include <unistd.h>
 #include <stdlib.h>
 
+
+#define MAX_PW_LENGTH 5
+
+
+/* function prototype */
 int string_comparer(char *q, char *s, char *salt);
 
+
+/* where all the fun stuff happens */
 int main(int argc, char *argv[])
 {
-    
+
     if (argc != 2) {
         printf("Usage: ./crack hash\n");
         return 1;
     }
-    
+
     char *s = argv[1];
     char salt[3] = {'5', '0', '\0'};
     char test_string [5] = { '\0' }; test_string[0] = 'a';
     int length;
-    
-    while (strlen(test_string) < 5) {
+
+    while (strlen(test_string) < MAX_PW_LENGTH) {
 
         length = strlen(test_string);
         // check to see if max combinations achieved (all 'Z' in array for given length)
@@ -31,13 +38,14 @@ int main(int argc, char *argv[])
                 test_string[j] = 'a';
             }
         }
-        
+
         // iterate through word
         for (int i = length - 1; i > -1; i--) {
-            // if this condition is true, but the ones following it are not, it's the only case in which the for loop will continue
+            /* if this condition is true, but the ones following it are not,
+            it's the only case in which the for loop will continue */
             if (test_string[i] == 'Z') {
             test_string[i] = 'a';
-            
+
                 // check if preceding letter needs to be changed (any letter preceding a Z that isn't itself Z)
                 if (test_string[i - 1] != 'Z') {
                     if (test_string[i - 1] == 'z') {
@@ -51,7 +59,7 @@ int main(int argc, char *argv[])
                     }
                 }
             }
-            
+
             // this will only trigger if the first letter checked isn't an uppercase Z.
             else {
                 if (test_string[i] == 'z') {
@@ -64,7 +72,7 @@ int main(int argc, char *argv[])
                 }
             }
         }
-        
+
     if (string_comparer(test_string, s, salt)) {
         printf("%s\n", test_string);
         return 0;
@@ -73,14 +81,14 @@ int main(int argc, char *argv[])
 
     }
     // end while loop
-    
+
 }
 
 // function for comparing input string to encrypted's string output
 int string_comparer(char *q, char *s, char *salt)
 {
     char *string_enc = crypt(q, salt);
-    
+
     for (int i = 0; i < strlen(s); i++) {
         if (s[i] != string_enc[i]) {
             return 0;
