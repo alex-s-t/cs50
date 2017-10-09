@@ -1,0 +1,21 @@
+0.  some kind of lung problem (it's just a long word, longest in the OED)
+1.  gets, uh, the resource usage for a process (caller or children)
+2.  two variables in getrusage.
+3.  because we *don't* want to change their contents.
+
+4.  The first 'while' loop will proceed until the end of file, checking the file read position cursor to determine this.
+        the for loop will iterate char by char throughout the text, with the following if conditions:
+            if a char is alphabetical, or it's an apostrophe (and not the first char of a word), then thiss will be added the the word array.
+                if the index (space between numbers / spaces and words etc) grows greater then 45, the while loop will read until the end of that 'word' and ignore it.
+            
+            else, if a char is a number, then the whole word in which it is contained gets ignored.
+            
+            else if the index is greater than 0, a word must have been found:
+                a null terminating char is added to the string;
+                some benchmarks;
+                the word is checked in the dictionary;
+                the index is set to zero and the for loop begins again :)
+                
+5.  not using fscanf because we want our words to be 'sanitised' (i.e. the only punctuation we want are apostrophes within words and at the end
+    we don't want things such as commas)
+6.  so that we don't (probably accidentally) change the values - they are, after all, pointers.
