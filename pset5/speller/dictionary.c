@@ -13,6 +13,8 @@
 
 
 #define MAX_WORD_LENGTH 47
+#define MAX_LETTERS 27
+#define ASCII_TO_0_26 97   /* conversion number to get alpha value 0-25 */
 
 
 // declare GLOBAL variable of wordcount !
@@ -35,7 +37,7 @@ bool check(const char *word)
 
     for (int i = 0; i < strlen(word) + 1; i++) {
         if (isalpha(word[i])) {
-            index = tolower(word[i]) - 97;
+            index = tolower(word[i]) - ASCII_TO_0_26;
         }
         else {
             index = 26;
@@ -47,17 +49,14 @@ bool check(const char *word)
                 return true;
             }
         }
-        else if (trav->children[index] == NULL)
-        {
+        else if (trav->children[index] == NULL) {
             return false;
         }
-        else if (trav->children[index] != NULL)
-        {
+        else if (trav->children[index] != NULL) {
             trav = trav->children[index];
         }
-
-
     }
+
     return false;
 }
 
@@ -78,44 +77,38 @@ bool load(const char *dictionary)
 
     char word[MAX_WORD_LENGTH] = { '\0' };
 
-    // (for word in dictionary) [load it!]
-    while (fscanf(inptr, "%s", word) != EOF)
-    {
+    /* (for word in dictionary) [load it!] */
+    while (fscanf(inptr, "%s", word) != EOF) {
 
         count++;
 
         node *trav = root;
         int length = strlen(word);
         // for char in word
-        for (int i = 0; i < length; i++)
-        {
-            if ((word[i]) != '\'')
-            {
-                index = tolower(word[i]) - 97;
+        for (int i = 0; i < length; i++) {
+
+            if ((word[i]) != '\'') {
+                index = tolower(word[i]) - ASCII_TO_0_26;
             }
-            else
-            {
+            else {
                 index = 26;
             }
 
-            // trav->children: get member 'children' from struct that trav points to
-            if (i == length - 1)
-            {
+            /* trav->children: get'children' from struct that trav points to */
+            if (i == length - 1) {
                 node *temp = calloc(1, node_size);
                 trav->children[index] = temp;
                 trav = trav->children[index];
                 trav->isWord = true;
             }
 
-            else if (trav->children[index] == NULL)
-            {
+            else if (trav->children[index] == NULL) {
                 node *temp = calloc(1, node_size);
                 trav->children[index] = temp;
                 trav = trav->children[index];
-
             }
-            else if (trav->children[index] != NULL)
-            {
+
+            else if (trav->children[index] != NULL) {
                 trav = trav->children[index];
             }
         }
@@ -141,6 +134,7 @@ unsigned int size(void)
 bool unload(void)
 {
     trie_clear(root);
+
     return true;
 }
 
@@ -152,10 +146,9 @@ void trie_clear(node * root)
 {
     int i;
 
-    for (i = 0; i < 27; i++)
-    {
-        if (root->children[i] != NULL)
-        {
+    for (i = 0; i < MAX_LETTERS; i++) {
+
+        if (root->children[i] != NULL) {
             trie_clear(root->children[i]);
         }
     }
