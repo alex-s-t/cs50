@@ -1,6 +1,7 @@
 def pyramid_printer(height):
     """Simply prints out a mario end stage pyramid"""
 
+    # sentinel values for sanity in terminal output
     if height < 0 or height > 23:
         return False
 
