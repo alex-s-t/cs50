@@ -1,0 +1,13 @@
+1.  stdint.h declares the 'standard widths' of integers. This is because we don't necessarily know what our compiler/computer supports, in say, 'long'...
+2.  uint8_t (etc) refer to ints that are a specific number of bits long. Whatever integer range is supported by 8 bits here, for example. On one PC 'long' might
+be 32 bits, on another it might be 64, so we might just want to request 32 bits for the hell of it.
+3.  BYTE = 1 (byte), DWORD = 4 bytes, LONG = 4 bytes, WORD = 2 bytes
+4.  The first characters must be 'BM' (whatever those are in dec and hex)
+5.  biSize = header size (always 40 bytes at min), bfSize = file size of bmp
+6.  if biHeight is negative, origin of image is top left corner.
+7.  biBitCount specifies the colour depth in BITMAPINFOHEADER
+8.  line 24/32: if it can't read / write, if there's no actual file or it's the wrong format etc it'll return NULL.
+9.  It tells us how much data to read each time (that of SIZE) 'block of size'. e.g. a triple (size 3 bytes).
+10. Whatever the difference between a multiple of 4 and the actual bytes in the image. Here, it'll be 3 pixels by * 3 bytes for each pixel (3 * 3 bytes per line needs 3 to pad.).
+11. skips over padding, presumably because that is NOT real image (colour) data.
+12. something to do with relative position of the file pointer, whatever that means. ??
