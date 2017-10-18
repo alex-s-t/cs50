@@ -1,21 +1,28 @@
-i,c,q,z = 0,0,0,0
+def greedy_change(c):
+    """Determines min. number of coins as change"""
 
-c = float(input("Please enter your number: "))
+    i,q,z = 0,0,0
 
-z = int(c * 100) # it seems that there is no need to round here ?
-print(z)
 
-i = z // 25
-q = z % 25
-z = q
+    z = int(c * 100) # round to int
 
-i = i + (z // 10)
-q = z % 10
-z = q
+    i = z // 25
+    q = z % 25
+    z = q
 
-i = i + (z // 5)
-q = z % 5
+    i = i + (z // 10)
+    q = z % 10
+    z = q
 
-i = i + q
+    i = i + (z // 5)
+    q = z % 5
 
-print(int(i))   
+    i = i + q
+
+    return i
+
+
+if __name__ == "__main__":
+
+    c = float(input("Please enter your number: "))
+    print(greedy_change(c))
