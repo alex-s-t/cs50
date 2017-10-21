@@ -15,5 +15,11 @@ def pyramid_printer(height):
 
 
 if __name__ == "__main__":
-    pyramid_printer(15)
+
+    height = 0
+
+    while height <= 0 or height > 23:
+        height = int(input("Height: "))
+
+    pyramid_printer(height)
 
