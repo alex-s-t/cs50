@@ -12,6 +12,8 @@
 #define CMD_ARGUMENTS 4
 
 #define FILE_OPEN_FAILURE 2
+#define UNSUPPORTED_FORMAT 4
+#define MALLOC_FAILURE 5
 
 
 /* where it all happens */
@@ -23,11 +25,11 @@ int main(int argc, char *argv[])
         return FAILURE;
     }
 
-    // remember filenames
+    /* remember filenames */
     char *infile = argv[2];
     char *outfile = argv[3];
 
-    // remember scaling factor
+    /* remember scaling factor */
     int scaling_factor = atoi(argv[1]);
 
     /* open input file */
@@ -37,7 +39,7 @@ int main(int argc, char *argv[])
         return FILE_OPEN_FAILURE;
     }
 
-    // open output file
+    /* open output file */
     FILE *outptr = fopen(outfile, "w");
     if (outptr == NULL) {
         fclose(inptr);
@@ -64,7 +66,7 @@ int main(int argc, char *argv[])
         fclose(outptr);
         fclose(inptr);
         fprintf(stderr, "Unsupported file format.\n");
-        return 4;
+        return UNSUPPORTED_FORMAT;
     }
 
 
@@ -90,59 +92,46 @@ int main(int argc, char *argv[])
     // container array for rows
     RGBTRIPLE *row = malloc(out_info_head.biWidth * sizeof(RGBTRIPLE));
     if (row == NULL) {
-        return 8;
+        return MALLOC_FAILURE;
     }
 
     // iterate over infile's scanlines
-    for (int i = 0, biHeight = abs(bi.biHeight); i < biHeight; i++)
-
-    {
+    for (int i = 0, biHeight = abs(bi.biHeight); i < biHeight; i++) {
         // tracker variable to scale this array by whatever n is
         int tracker = 0;
 
         // iterate over pixels in scanline
-        for (int j = 0; j < bi.biWidth; j++)
-        {
+        for (int j = 0; j < bi.biWidth; j++) {
             // temporary storage
             RGBTRIPLE triple;
-
             // read RGB triple from infile
             fread(&triple, sizeof(RGBTRIPLE), 1, inptr);
-
             // scale horizontally
             for (int k = 0; k < scaling_factor; k++) {
-
-            // update array with triple (same thing as row[tracker])
-            *(row + tracker) = triple;
-            tracker++;
+                // update array with triple (same thing as row[tracker])
+                *(row + tracker) = triple;
+                tracker++;
             }
-
-            }
-
-        // write out row to out file
+        }
+        /* write out row to out file */
         for (int j = 0; j < scaling_factor; j++) {
-        fwrite(row, sizeof(RGBTRIPLE), out_info_head.biWidth, outptr);
-
-        // add padding to out file (has to be enclosed in loop above for scaling)
+            fwrite(row, sizeof(RGBTRIPLE), out_info_head.biWidth, outptr);
+            /* add padding to out file (has to be enclosed in loop above for scaling) */
             for (int k = 0; k < padding_out_file; k++) {
-            fputc(0x00, outptr);
-             }
-
+                fputc(0x00, outptr);
+            }
         }
 
         // skip over padding (in the infile), if any
         fseek(inptr, padding, SEEK_CUR);
-
-}
+    }
     // free memory
     free(row);
-
     // close infile
     fclose(inptr);
-
     // close outfile
     fclose(outptr);
 
     // success
-    return 0;
+    return SUCCESS;
 }
